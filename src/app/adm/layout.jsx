@@ -1,6 +1,7 @@
 // app/adm/layout.jsx
 
-import NavAdm from "@/components/navAdm";
+import NavAdm from "../../components/NavAdm";
+
 
 export const metadata = {
     title: "Panel de administración",
