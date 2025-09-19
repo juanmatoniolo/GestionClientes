@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import styles from "./page.module.css"; // ⬅️ importa el CSS Module
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import styles from "./page.module.css";
 
 // ---------- helpers de estado civil ----------
 const ESTADO_BASE = ["Soltero", "Casado", "Divorciado", "Viudo"];
@@ -47,16 +49,18 @@ const REQUIRED_KEYS = [
 ];
 
 export default function NuevoCliente() {
+    const router = useRouter();
+
     const [data, setData] = useState(empty);
     const [saving, setSaving] = useState(false);
     const [err, setErr] = useState("");
     const [touchedSubmit, setTouchedSubmit] = useState(false);
 
-    const upd = (patch) => setData(prev => ({ ...prev, ...patch }));
+    const upd = (patch) => setData((prev) => ({ ...prev, ...patch }));
 
     // Opciones de estado civil derivadas del sexo
     const estadoCivilOptions = useMemo(
-        () => ESTADO_BASE.map(b => genderize(b, data.sexo || "")),
+        () => ESTADO_BASE.map((b) => genderize(b, data.sexo || "")),
         [data.sexo]
     );
 
@@ -66,7 +70,7 @@ export default function NuevoCliente() {
         const base = toBase(data.estadoCivil);
         const adjusted = genderize(base, data.sexo || "");
         if (adjusted !== data.estadoCivil) {
-            setData(prev => ({ ...prev, estadoCivil: adjusted }));
+            setData((prev) => ({ ...prev, estadoCivil: adjusted }));
         }
     }, [data.sexo]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -99,7 +103,7 @@ export default function NuevoCliente() {
                 body: JSON.stringify(data),
             });
             if (!res.ok) throw new Error("No se pudo guardar.");
-            window.location.href = "/adm/clientes";
+            router.push("/adm/clientes"); // navegación client-side
         } catch (e) {
             setErr(e.message || "Error guardando.");
         } finally {
@@ -111,17 +115,18 @@ export default function NuevoCliente() {
     const inv = (key) => (touchedSubmit && missing[key] ? "is-invalid" : "");
 
     return (
-        <main className={`container py-4 ${styles.page}`}> {/* ⬅️ clase local */}
+        <main className={`container py-4 ${styles.page}`}>
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h1 className="m-0">Nuevo cliente</h1>
-                <a className="btn btn-outline-secondary" href="/adm/clientes">Volver</a>
+                <Link prefetch className="btn btn-outline-secondary" href="/adm/clientes">
+                    Volver
+                </Link>
             </div>
 
             {err && <div className="alert alert-danger">{err}</div>}
 
-            <form onSubmit={save} className={`card card-body ${styles.formCard}`}> {/* ⬅️ clase local */}
+            <form onSubmit={save} className={`card card-body ${styles.formCard}`}>
                 <div className="row g-2">
-
                     {/* Expediente / Dependencia primero (obligatorios) */}
                     <div className="col-md-4">
                         <label className="form-label">Expediente *</label>
@@ -129,7 +134,7 @@ export default function NuevoCliente() {
                             className={`form-control ${inv("expediente")}`}
                             placeholder="Ej.: CCF 013110/2024"
                             value={data.expediente}
-                            onChange={e => upd({ expediente: e.target.value })}
+                            onChange={(e) => upd({ expediente: e.target.value })}
                         />
                         <div className="invalid-feedback">Obligatorio.</div>
                     </div>
@@ -140,20 +145,20 @@ export default function NuevoCliente() {
                             className={`form-control ${inv("dependencia")}`}
                             placeholder="Ej.: JUZGADO CIVIL Y COMERCIAL FEDERAL 6 - SECRETARÍA Nº 11"
                             value={data.dependencia}
-                            onChange={e => upd({ dependencia: e.target.value })}
+                            onChange={(e) => upd({ dependencia: e.target.value })}
                         />
                         <div className="invalid-feedback">Obligatorio.</div>
                     </div>
 
                     <span className="pb-4"></span>
-                    <hr className={styles.hr} /> {/* ⬅️ separador estilizado */}
+                    <hr className={styles.hr} />
 
                     <div className="col-md-4">
                         <label className="form-label">Apellido *</label>
                         <input
                             className={`form-control ${inv("apellido")}`}
                             value={data.apellido}
-                            onChange={e => upd({ apellido: e.target.value })}
+                            onChange={(e) => upd({ apellido: e.target.value })}
                         />
                         <div className="invalid-feedback">Obligatorio.</div>
                     </div>
@@ -163,7 +168,7 @@ export default function NuevoCliente() {
                         <input
                             className={`form-control ${inv("nombre")}`}
                             value={data.nombre}
-                            onChange={e => upd({ nombre: e.target.value })}
+                            onChange={(e) => upd({ nombre: e.target.value })}
                         />
                         <div className="invalid-feedback">Obligatorio.</div>
                     </div>
@@ -173,7 +178,7 @@ export default function NuevoCliente() {
                         <input
                             className="form-control"
                             value={data.dni}
-                            onChange={e => upd({ dni: e.target.value })}
+                            onChange={(e) => upd({ dni: e.target.value })}
                         />
                     </div>
 
@@ -182,7 +187,7 @@ export default function NuevoCliente() {
                         <select
                             className={`form-select ${inv("sexo")}`}
                             value={data.sexo}
-                            onChange={e => upd({ sexo: e.target.value })}
+                            onChange={(e) => upd({ sexo: e.target.value })}
                         >
                             <option value="">Seleccionar…</option>
                             <option value="Masculino">Masculino</option>
@@ -198,11 +203,13 @@ export default function NuevoCliente() {
                         <select
                             className={`form-select ${inv("estadoCivil")}`}
                             value={data.estadoCivil}
-                            onChange={e => upd({ estadoCivil: e.target.value })}
+                            onChange={(e) => upd({ estadoCivil: e.target.value })}
                         >
                             <option value="">Seleccionar…</option>
-                            {estadoCivilOptions.map(opt => (
-                                <option key={opt} value={opt}>{opt}</option>
+                            {estadoCivilOptions.map((opt) => (
+                                <option key={opt} value={opt}>
+                                    {opt}
+                                </option>
                             ))}
                         </select>
                         <div className="invalid-feedback">Obligatorio.</div>
@@ -214,7 +221,7 @@ export default function NuevoCliente() {
                             type="date"
                             className={`form-control ${inv("fechaNacimiento")}`}
                             value={data.fechaNacimiento}
-                            onChange={e => upd({ fechaNacimiento: e.target.value })}
+                            onChange={(e) => upd({ fechaNacimiento: e.target.value })}
                         />
                         <div className="invalid-feedback">Obligatorio.</div>
                     </div>
@@ -224,7 +231,7 @@ export default function NuevoCliente() {
                         <input
                             className={`form-control ${inv("domicilioReal")}`}
                             value={data.domicilioReal}
-                            onChange={e => upd({ domicilioReal: e.target.value })}
+                            onChange={(e) => upd({ domicilioReal: e.target.value })}
                         />
                         <div className="invalid-feedback">Obligatorio.</div>
                     </div>
@@ -234,7 +241,7 @@ export default function NuevoCliente() {
                         <input
                             className={`form-control ${inv("pasaporteNumero")}`}
                             value={data.pasaporteNumero}
-                            onChange={e => upd({ pasaporteNumero: e.target.value })}
+                            onChange={(e) => upd({ pasaporteNumero: e.target.value })}
                         />
                         <div className="invalid-feedback">Obligatorio.</div>
                     </div>
@@ -244,7 +251,7 @@ export default function NuevoCliente() {
                         <input
                             className={`form-control ${inv("pasaporteOrigen")}`}
                             value={data.pasaporteOrigen}
-                            onChange={e => upd({ pasaporteOrigen: e.target.value })}
+                            onChange={(e) => upd({ pasaporteOrigen: e.target.value })}
                         />
                         <div className="invalid-feedback">Obligatorio.</div>
                     </div>
@@ -254,7 +261,7 @@ export default function NuevoCliente() {
                         <input
                             className={`form-control ${inv("lugarNacimiento")}`}
                             value={data.lugarNacimiento}
-                            onChange={e => upd({ lugarNacimiento: e.target.value })}
+                            onChange={(e) => upd({ lugarNacimiento: e.target.value })}
                         />
                         <div className="invalid-feedback">Obligatorio.</div>
                     </div>
@@ -264,7 +271,7 @@ export default function NuevoCliente() {
                         <input
                             className="form-control"
                             value={data.telefono}
-                            onChange={e => upd({ telefono: e.target.value })}
+                            onChange={(e) => upd({ telefono: e.target.value })}
                         />
                     </div>
 
@@ -274,7 +281,7 @@ export default function NuevoCliente() {
                             type="email"
                             className="form-control"
                             value={data.mail}
-                            onChange={e => upd({ mail: e.target.value })}
+                            onChange={(e) => upd({ mail: e.target.value })}
                         />
                     </div>
 
@@ -284,7 +291,7 @@ export default function NuevoCliente() {
                             className="form-control"
                             placeholder="Ej.: Informático"
                             value={data.ocupacion}
-                            onChange={e => upd({ ocupacion: e.target.value })}
+                            onChange={(e) => upd({ ocupacion: e.target.value })}
                         />
                     </div>
 
@@ -293,7 +300,7 @@ export default function NuevoCliente() {
                         <input
                             className={`form-control ${inv("padre")}`}
                             value={data.padre}
-                            onChange={e => upd({ padre: e.target.value })}
+                            onChange={(e) => upd({ padre: e.target.value })}
                         />
                         <div className="invalid-feedback">Obligatorio.</div>
                     </div>
@@ -303,7 +310,7 @@ export default function NuevoCliente() {
                         <input
                             className={`form-control ${inv("madre")}`}
                             value={data.madre}
-                            onChange={e => upd({ madre: e.target.value })}
+                            onChange={(e) => upd({ madre: e.target.value })}
                         />
                         <div className="invalid-feedback">Obligatorio.</div>
                     </div>
@@ -314,7 +321,7 @@ export default function NuevoCliente() {
                             type="date"
                             className={`form-control ${inv("fechaLlegada")}`}
                             value={data.fechaLlegada}
-                            onChange={e => upd({ fechaLlegada: e.target.value })}
+                            onChange={(e) => upd({ fechaLlegada: e.target.value })}
                         />
                         <div className="invalid-feedback">Obligatorio.</div>
                     </div>
@@ -324,14 +331,14 @@ export default function NuevoCliente() {
                         <input
                             className="form-control"
                             value={data.medioTransporte}
-                            onChange={e => upd({ medioTransporte: e.target.value })}
+                            onChange={(e) => upd({ medioTransporte: e.target.value })}
                         />
                     </div>
                 </div>
 
                 {/* Acciones sticky en mobile */}
                 <div className={`d-flex mt-3 ${styles.stickyActions}`}>
-                    <button className="btn btn-primary ms-auto" disabled={saving}>
+                    <button className="btn btn-primary ms-auto" disabled={saving} type="submit" aria-disabled={saving}>
                         {saving ? "Guardando..." : "Guardar"}
                     </button>
                 </div>

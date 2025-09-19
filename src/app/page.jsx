@@ -1,8 +1,11 @@
 // app/page.jsx
+import Link from "next/link";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata = {
   title: "Gestor de Ciudadanías | Inicio",
-  description: "App interna para gestionar clientes, dependencias y generar oficios en PDF",
+  description:
+    "App interna para gestionar clientes, dependencias y generar oficios en PDF",
 };
 
 export default function HomePage() {
@@ -13,8 +16,10 @@ export default function HomePage() {
           <div className="text-center mb-4">
             <h1 className="display-6">Gestor de Ciudadanías</h1>
             <p className="text-muted m-0">
-              App interna para cargar <strong>Clientes</strong>, administrar <strong>Dependencias</strong> (Juzgados y Secretarías)
-              y generar <strong>Oficios</strong> (RENAPER, Migraciones, Interpol, RNR y Azopardo) en PDF listos para presentar.
+              App interna para cargar <strong>Clientes</strong>, administrar{" "}
+              <strong>Dependencias</strong> (Juzgados y Secretarías) y generar{" "}
+              <strong>Oficios</strong> (RENAPER, Migraciones, Interpol, RNR y
+              Azopardo) en PDF listos para presentar.
             </p>
           </div>
 
@@ -22,19 +27,30 @@ export default function HomePage() {
             <div className="card-body p-4">
               <h5 className="card-title mb-3">¿Qué podés hacer?</h5>
               <ul className="list-unstyled mb-4">
-                <li className="mb-2">• Alta, edición y búsqueda de <strong>Clientes</strong> con todos los datos necesarios.</li>
-                <li className="mb-2">• Carga y edición de <strong>Dependencias</strong>: 11 juzgados comunes + 5 especiales, cada uno con Secretaría 1 y 2.</li>
-                <li className="mb-2">• Generación de <strong>Oficios en PDF</strong> por organismo, con opción de Art. 400 y firma.</li>
+                <li className="mb-2">
+                  • Alta, edición y búsqueda de <strong>Clientes</strong> con
+                  todos los datos necesarios.
+                </li>
+                <li className="mb-2">
+                  • Carga y edición de <strong>Dependencias</strong>: 11
+                  juzgados comunes + 5 especiales, cada uno con Secretaría 1 y
+                  2.
+                </li>
+                <li className="mb-2">
+                  • Generación de <strong>Oficios en PDF</strong> por
+                  organismo, con opción de Art. 400 y firma.
+                </li>
               </ul>
 
               <div className="alert alert-info small">
-                <strong>Nota:</strong> la app usa Next.js 15, Bootstrap y Firebase Realtime Database.
+                <strong>Nota:</strong> la app usa Next.js 15, Bootstrap y
+                Firebase Realtime Database.
               </div>
 
               <div className="d-grid">
-                <a href="/login" className="btn btn-primary btn-lg">
+                <Link href="/login" className="btn btn-primary btn-lg">
                   Iniciar sesión
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -44,6 +60,9 @@ export default function HomePage() {
           </p>
         </div>
       </section>
+
+      {/* Métricas de rendimiento de Vercel */}
+      <SpeedInsights />
     </main>
   );
 }

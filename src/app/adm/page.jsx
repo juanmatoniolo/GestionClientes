@@ -1,4 +1,6 @@
 // app/adm/page.jsx
+import Link from "next/link";
+
 export const metadata = {
     title: "Panel de administración",
     description: "Gestión de clientes, dependencias y oficios",
@@ -21,9 +23,21 @@ export default function AdmPage() {
                                 Juzgados (CABA e interior) y sus Secretarías.
                             </p>
                             <div className="mt-auto d-grid gap-2">
-                                <a className="btn btn-primary" href="/adm/juzgados">Ver / Editar juzgados</a>
-                                <a className="btn btn-outline-primary" href="/adm/juzgados/nuevo">Agregar juzgado</a>
-                                <a className="btn btn-outline-success" href="/adm/dependencias/import">Importar desde texto</a>
+                                <Link className="btn btn-primary" href="/adm/juzgados">
+                                    Ver / Editar juzgados
+                                </Link>
+                                <Link
+                                    className="btn btn-outline-primary"
+                                    href="/adm/juzgados/nuevo"
+                                >
+                                    Agregar juzgado
+                                </Link>
+                                <Link
+                                    className="btn btn-outline-success"
+                                    href="/adm/dependencias/import"
+                                >
+                                    Importar desde texto
+                                </Link>
                             </div>
                         </div>
                     </div>
@@ -38,8 +52,15 @@ export default function AdmPage() {
                                 Alta, edición y búsqueda de clientes.
                             </p>
                             <div className="mt-auto d-grid gap-2">
-                                <a className="btn btn-primary" href="/adm/clientes">Ver / Editar clientes</a>
-                                <a className="btn btn-outline-primary" href="/adm/clientes/nuevo">Agregar cliente</a>
+                                <Link className="btn btn-primary" href="/adm/clientes">
+                                    Ver / Editar clientes
+                                </Link>
+                                <Link
+                                    className="btn btn-outline-primary"
+                                    href="/adm/clientes/nuevo"
+                                >
+                                    Agregar cliente
+                                </Link>
                             </div>
                         </div>
                     </div>
@@ -51,10 +72,13 @@ export default function AdmPage() {
                         <div className="card-body d-flex flex-column">
                             <h5 className="card-title">Oficios</h5>
                             <p className="card-text small text-muted">
-                                Generación de oficios RENAPER, Migraciones, Interpol, RNR y Azopardo (PDF).
+                                Generación de oficios RENAPER, Migraciones, Interpol, RNR y
+                                Azopardo (PDF).
                             </p>
                             <div className="mt-auto d-grid">
-                                <a className="btn btn-success" href="/oficios/generar">Generar oficios</a>
+                                <Link className="btn btn-success" href="adm/oficios/generar">
+                                    Generar oficios
+                                </Link>
                             </div>
                         </div>
                     </div>

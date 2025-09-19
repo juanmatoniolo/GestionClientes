@@ -1,6 +1,5 @@
 /* Contenedor y tipografía */
 .page {
-    /* el <main> ya tiene .container de Bootstrap; esto agrega límites suaves */
     max-width: 980px;
 }
 
@@ -24,14 +23,14 @@
 }
 
 /* Labels y campos (scoped a la card) */
-.formCard :global(.form-label) {
+.formCard .form-label {
     font-weight: 600;
     color: #343a40;
     margin-bottom: .35rem;
 }
 
-.formCard :global(.form-control),
-.formCard :global(.form-select) {
+.formCard .form-control,
+.formCard .form-select {
     min-height: 44px;
     border-radius: 10px;
     border-color: #dee2e6;
@@ -39,34 +38,33 @@
     transition: border-color .15s ease, box-shadow .15s ease;
 }
 
-.formCard :global(.form-control:focus),
-.formCard :global(.form-select:focus) {
+.formCard .form-control:focus,
+.formCard .form-select:focus {
     border-color: #86b7fe;
     box-shadow: 0 0 0 .2rem rgba(13, 110, 253, .15);
 }
 
 /* Estados de validación */
-.formCard :global(.is-invalid) {
+.formCard .is-invalid {
     border-color: #dc3545 !important;
     box-shadow: 0 0 0 .15rem rgba(220, 53, 69, .12);
 }
 
-.formCard :global(.invalid-feedback) {
+.formCard .invalid-feedback {
     font-size: .85rem;
 }
 
 /* Botones */
-.formCard :global(.btn.btn-primary) {
+.formCard .btn.btn-primary {
     min-height: 44px;
     border-radius: 10px;
     font-weight: 600;
     letter-spacing: .2px;
 }
 
-.formCard :global(.btn.btn-outline-secondary) {
+.formCard .btn.btn-outline-secondary {
     border-radius: 10px;
 }
-
 
 
 /* Mobile */
@@ -77,7 +75,7 @@
         background: #fff;
         padding-top: .5rem;
         margin-left: -16px;
-        /* compensan el padding de .container en mobile */
+        /* compensa el padding de .container en mobile */
         margin-right: -16px;
         padding-left: 16px;
         padding-right: 16px;
@@ -86,21 +84,21 @@
     }
 
     /* Botones full width en mobile */
-    .stickyActions :global(.btn) {
+    .stickyActions .btn {
         width: 100%;
     }
 
-    .stickyActions :global(.btn.ms-auto) {
+    .stickyActions .btn.ms-auto {
         margin-left: 0 !important;
     }
 
     /* Más aire entre campos en mobile */
-    .formCard :global(.row.g-2 > [class*="col-"]) {
+    .formCard .row.g-2>[class*="col-"] {
         margin-bottom: .35rem;
     }
 }
 
-/* Desktop */
+/* Ajustes de padding en desktop */
 @media (min-width: 992px) {
     .formCard {
         padding: 24px 26px;
@@ -108,20 +106,20 @@
 }
 
 /* Placeholders más legibles (scoped) */
-.formCard :global(::placeholder) {
+.formCard ::placeholder {
     color: #adb5bd !important;
     opacity: 1;
 }
 
 /* Inputs de fecha consistentes */
-.formCard :global(input[type="date"].form-control) {
+.formCard input[type="date"].form-control {
     line-height: 1.4;
     padding-top: .4rem;
     padding-bottom: .4rem;
 }
 
 /* Enlaces “Volver” discretos */
-.formCard :global(a.btn.btn-outline-secondary) {
+.formCard a.btn.btn-outline-secondary {
     --bs-btn-color: #495057;
     --bs-btn-border-color: #ced4da;
     --bs-btn-hover-bg: #f8f9fa;

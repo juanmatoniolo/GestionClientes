@@ -1,0 +1,219 @@
+.page {
+    max-width: 1080px;
+}
+
+.header {
+    gap: .75rem;
+}
+
+.addBtn {
+    min-height: 42px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+/* Mensajes */
+.alert {
+    border-radius: 12px;
+}
+
+/* Tabla desktop/tablet */
+.tableWrap {
+    border: 1px solid #eef1f4;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow:
+        0 1px 1px rgba(0, 0, 0, .02),
+        0 6px 18px rgba(0, 0, 0, .05);
+}
+
+.tableWrap thead th {
+    position: sticky;
+    top: 0;
+    background: #f8f9fa;
+    z-index: 1;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* ---------- Cards móviles ---------- */
+.cardsMobile {
+    display: none;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.cardItem {
+    border: 1px solid #eef1f4;
+    border-radius: 14px;
+    padding: 12px;
+    box-shadow:
+        0 1px 1px rgba(0, 0, 0, .02),
+        0 6px 16px rgba(0, 0, 0, .06);
+    background: #fff;
+}
+
+.cardHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+
+.avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #0d6efd;
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    letter-spacing: .2px;
+}
+
+.titleBlock {
+    display: grid;
+}
+
+.title {
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.subtle {
+    font-size: .85rem;
+    color: #6c757d;
+}
+
+.cardBody {
+    margin-top: 6px;
+    margin-bottom: 8px;
+    display: grid;
+    gap: 6px;
+}
+
+.rowLine {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.k {
+    color: #6c757d;
+    font-size: .9rem;
+}
+
+.v {
+    font-weight: 600;
+    font-size: .95rem;
+    text-align: right;
+}
+
+.cardActions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* ---------- Skeleton ---------- */
+.skel {
+    position: relative;
+    background: #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.skel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, .35) 50%,
+            rgba(255, 255, 255, 0) 100%);
+    animation: shimmer 1.15s infinite;
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+
+.skelAvatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+}
+
+.skelTitle {
+    width: 220px;
+    height: 14px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+}
+
+.skelSub {
+    width: 160px;
+    height: 12px;
+    border-radius: 6px;
+}
+
+.skelLine {
+    height: 12px;
+    border-radius: 6px;
+}
+
+.skelBtn {
+    width: 90px;
+    height: 32px;
+    border-radius: 8px;
+}
+
+.skelTd {
+    height: 16px;
+    border-radius: 6px;
+}
+
+.skelTdSm {
+    width: 60px;
+    height: 16px;
+    border-radius: 6px;
+}
+
+.skelBtnSm {
+    width: 72px;
+    height: 28px;
+    border-radius: 8px;
+}
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 575.98px) {
+    .tableWrap {
+        display: none;
+    }
+
+    .cardsMobile {
+        display: grid;
+    }
+
+    .page h1.m-0 {
+        font-size: 1.25rem;
+    }
+
+    .addBtn {
+        border-radius: 10px;
+    }
+}
+
+@media (min-width: 576px) {
+    .cardsMobile {
+        display: none;
+    }
+
+    .tableWrap {
+        display: block;
+    }
+}

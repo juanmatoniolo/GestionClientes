@@ -1,4 +1,6 @@
 // app/login/page.jsx
+import Link from "next/link";
+
 export const metadata = {
     title: "Iniciar sesión",
     description: "Acceso al sistema",
@@ -32,7 +34,7 @@ export default function LoginPage() {
                     </div>
 
                     <div className="text-center mt-3">
-                        <a href="/" className="small">← Volver al inicio</a>
+                        <Link href="/" className="small">← Volver al inicio</Link>
                     </div>
                 </div>
             </div>

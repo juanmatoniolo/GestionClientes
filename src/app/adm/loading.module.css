@@ -1,0 +1,32 @@
+/* From Uiverse.io by Yaya12085 */
+.loader {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    /* pequeño espacio entre icono y texto */
+    justify-content: center;
+    /* centrado horizontal si ocupa todo el contenedor */
+    min-height: 120px;
+    /* da área para que no “salte” el layout */
+}
+
+.icon {
+    height: 1.5rem;
+    width: 1.5rem;
+    animation: spin 1s linear infinite;
+    stroke: rgba(107, 114, 128, 1);
+}
+
+.loadingText {
+    font-size: 0.875rem;
+    /* un poco más legible en móvil */
+    line-height: 1rem;
+    font-weight: 500;
+    color: rgba(107, 114, 128, 1);
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
