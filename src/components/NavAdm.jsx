@@ -57,7 +57,7 @@ export default function NavAdm() {
                             link.items ? (
                                 <li key={i} className="nav-item dropdown">
                                     <button
-                                        className={`nav-link dropdown-toggle btn btn-link p-0 ${isActive(link.activePath) ? styles.activeDropdown : ""}`}
+                                        className={`nav-link dropdown-toggle ${isActive(link.activePath) ? styles.activeDropdown : ""}`}
                                         data-bs-toggle="dropdown"
                                         aria-expanded="false"
                                         type="button"

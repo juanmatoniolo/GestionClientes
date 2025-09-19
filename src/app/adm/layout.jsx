@@ -2,7 +2,6 @@
 
 import NavAdm from "../../components/NavAdm";
 
-
 export const metadata = {
     title: "Panel de administración",
     description: "Gestión de clientes, dependencias y oficios",

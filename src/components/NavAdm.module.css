@@ -1,44 +1,46 @@
 .navbar {
-    position: sticky;
-    top: 0;
-    z-index: 1040;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+	position: sticky;
+	top: 0;
+	z-index: 1040;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
+/* Margen entre ítems de navegación (solo desktop) */
+@media (min-width: 992px) {
+	.navbar-nav > .nav-item {
+		margin-right: 0.75rem;
+	}
+}
+
+/* Alineación del botón dropdown como nav-link */
+.navbar .dropdown-toggle {
+	padding: 0.5rem 1rem;
+	line-height: 1.5;
+	color: #fff;
+	background: none;
+	border: none;
+}
+
+/* Activo en dropdown toggle */
+.activeDropdown {
+	font-weight: bold;
+	color: #fff !important;
+}
+
+/* Hover y estilos del logout */
 .logoutBtn {
-    margin-left: 1rem;
-    transition: all 0.2s ease;
+	margin-left: 1rem;
+	transition: all 0.2s ease;
 }
 
 .logoutBtn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 5px #ffffff99;
+	transform: scale(1.05);
+	box-shadow: 0 0 5px #ffffff99;
 }
 
-.activeDropdown {
-    font-weight: bold;
-    color: #fff !important;
-}
-
+/* Estética del dropdown */
 .dropdown-menu {
-    margin-top: 0.5rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Espaciado entre ítems de navbar solo en modo desktop */
-@media (min-width: 992px) {
-    .navbar-nav>.nav-item {
-        margin-right: 0.75rem;
-        display: flex;
-        flex-flow: row nowrap;
-        align-items: center;
-    }
-}
-
-/* Alinear verticalmente botón del dropdown como nav-link */
-.navbar .dropdown-toggle {
-    padding: 0.5rem 1rem;
-    display: inline-block;
-    line-height: 1.5;
+	margin-top: 0.5rem;
+	border-radius: 0.5rem;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
