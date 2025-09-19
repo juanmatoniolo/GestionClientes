@@ -1,4 +1,5 @@
-import { initializeApp, getApps } from "firebase/app";
+// lib/firebaseClient.js
+import { initializeApp, getApps, getApp } from "firebase/app";
 import {
 	getDatabase,
 	ref,
@@ -14,20 +15,25 @@ const firebaseConfig = {
 	authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
 	databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
 	projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-	storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+	storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET, // opcional si no usás Storage
 	messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
 	appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-	measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+	measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID, // opcional
 };
 
+function getFirebaseApp() {
+	return getApps().length ? getApp() : initializeApp(firebaseConfig);
+}
+
 export function rtdb() {
-	const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+	const app = getFirebaseApp();
 	return getDatabase(app);
 }
 
+// Helpers que uso en las rutas API y componentes
 export const dbRef = ref;
 export const dbGet = get;
 export const dbSet = set;
-export const dbPush = push;
 export const dbUpdate = update;
 export const dbRemove = remove;
+export const dbPush = push;
