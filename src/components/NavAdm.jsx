@@ -1,22 +1,41 @@
-// components/NavAdm.jsx
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import styles from "./NavAdm.module.css";
+
+const links = [
+    { href: "/adm", label: "Panel" },
+    {
+        label: "Dependencias",
+        activePath: "/adm/juzgados",
+        items: [
+            { href: "/adm/juzgados", label: "Ver / Editar" },
+            { href: "/adm/juzgados/nuevo", label: "Agregar juzgado" },
+            { href: "/adm/dependencias/import", label: "Importar desde texto", prefetch: false },
+        ],
+    },
+    {
+        label: "Clientes",
+        activePath: "/adm/clientes",
+        items: [
+            { href: "/adm/clientes", label: "Ver / Editar" },
+            { href: "/adm/clientes/nuevo", label: "Agregar cliente" },
+        ],
+    },
+    { href: "/adm/oficios/generar", label: "Oficios" },
+];
 
 export default function NavAdm() {
-    const pathname = usePathname() || "/";
+    const pathname = usePathname();
 
     const isActive = (href) =>
         pathname === href || pathname.startsWith(href + "/");
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav className={`navbar navbar-expand-lg navbar-dark bg-dark ${styles.navbar}`}>
             <div className="container">
-                <Link
-                    href="/adm"
-                    className={`navbar-brand ${isActive("/adm") ? "active" : ""}`}
-                >
+                <Link href="/adm" className="navbar-brand fw-bold">
                     Admin
                 </Link>
 
@@ -34,108 +53,49 @@ export default function NavAdm() {
 
                 <div className="collapse navbar-collapse" id="admNav">
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                        {/* Panel */}
-                        <li className="nav-item">
-                            <Link
-                                href="/adm"
-                                className={`nav-link ${pathname === "/adm" ? "active" : ""}`}
-                            >
-                                Panel
-                            </Link>
-                        </li>
-
-                        {/* Dependencias */}
-                        <li className="nav-item dropdown">
-                            <button
-                                className={`nav-link dropdown-toggle btn btn-link p-0 ${isActive("/adm/juzgados") ? "active" : ""
-                                    }`}
-                                id="depDrop"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false"
-                                type="button"
-                            >
-                                Dependencias
-                            </button>
-                            <ul className="dropdown-menu" aria-labelledby="depDrop">
-                                <li>
-                                    <Link
-                                        href="/adm/juzgados"
-                                        className={`dropdown-item ${isActive("/adm/juzgados") ? "active" : ""
-                                            }`}
+                        {links.map((link, i) =>
+                            link.items ? (
+                                <li key={i} className="nav-item dropdown">
+                                    <button
+                                        className={`nav-link dropdown-toggle btn btn-link p-0 ${isActive(link.activePath) ? styles.activeDropdown : ""}`}
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false"
+                                        type="button"
                                     >
-                                        Ver / Editar
+                                        {link.label}
+                                    </button>
+                                    <ul className="dropdown-menu">
+                                        {link.items.map((item, j) => (
+                                            <li key={j}>
+                                                <Link
+                                                    href={item.href}
+                                                    prefetch={item.prefetch ?? true}
+                                                    className={`dropdown-item ${isActive(item.href) ? "active" : ""}`}
+                                                >
+                                                    {item.label}
+                                                </Link>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </li>
+                            ) : (
+                                <li key={i} className="nav-item">
+                                    <Link
+                                        href={link.href}
+                                        className={`nav-link ${isActive(link.href) ? "active" : ""}`}
+                                    >
+                                        {link.label}
                                     </Link>
                                 </li>
-                                <li>
-                                    <Link
-                                        href="/adm/juzgados/nuevo"
-                                        className={`dropdown-item ${pathname === "/adm/juzgados/nuevo" ? "active" : ""
-                                            }`}
-                                    >
-                                        Agregar juzgado
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        href="/adm/dependencias/import"
-                                        prefetch={false}
-                                        className={`dropdown-item ${pathname === "/adm/dependencias/import" ? "active" : ""
-                                            }`}
-                                    >
-                                        Importar desde texto
-                                    </Link>
-                                </li>
-                            </ul>
-                        </li>
-
-                        {/* Clientes */}
-                        <li className="nav-item dropdown">
-                            <button
-                                className={`nav-link dropdown-toggle btn btn-link p-0 ${isActive("/adm/clientes") ? "active" : ""
-                                    }`}
-                                id="cliDrop"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false"
-                                type="button"
-                            >
-                                Clientes
-                            </button>
-                            <ul className="dropdown-menu" aria-labelledby="cliDrop">
-                                <li>
-                                    <Link
-                                        href="/adm/clientes"
-                                        className={`dropdown-item ${isActive("/adm/clientes") ? "active" : ""
-                                            }`}
-                                    >
-                                        Ver / Editar
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        href="/adm/clientes/nuevo"
-                                        className={`dropdown-item ${pathname === "/adm/clientes/nuevo" ? "active" : ""
-                                            }`}
-                                    >
-                                        Agregar cliente
-                                    </Link>
-                                </li>
-                            </ul>
-                        </li>
-
-                        {/* Oficios */}
-                        <li className="nav-item">
-                            <Link
-                                href="adm/oficios/generar"
-                                className={`nav-link ${isActive("adm/oficios/generar") ? "active" : ""
-                                    }`}
-                            >
-                                Oficios
-                            </Link>
-                        </li>
+                            )
+                        )}
                     </ul>
 
                     <form className="d-flex" method="post" action="/api/logout">
-                        <button className="btn btn-outline-light btn-sm" type="submit">
+                        <button
+                            className={`btn btn-outline-light btn-sm ${styles.logoutBtn}`}
+                            type="submit"
+                        >
                             Cerrar sesión
                         </button>
                     </form>

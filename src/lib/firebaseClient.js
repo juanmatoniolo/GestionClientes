@@ -15,13 +15,16 @@ const firebaseConfig = {
 	authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
 	databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
 	projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-	storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET, // opcional si no usás Storage
+	storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
 	messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
 	appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-	measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID, // opcional
+	measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
 function getFirebaseApp() {
+	if (!firebaseConfig.apiKey) {
+		throw new Error("Faltan variables de entorno de Firebase");
+	}
 	return getApps().length ? getApp() : initializeApp(firebaseConfig);
 }
 
@@ -30,7 +33,7 @@ export function rtdb() {
 	return getDatabase(app);
 }
 
-// Helpers que uso en las rutas API y componentes
+// Helpers para uso en componentes/API
 export const dbRef = ref;
 export const dbGet = get;
 export const dbSet = set;

@@ -148,7 +148,7 @@ export default function EditarJuzgadoPage() {
         return (
             <main className="container py-4">
                 <div className=" mb-3">
-                    cargando...
+                    <Loading />
                 </div>
                 <Link className="btn btn-outline-secondary" href="/adm/juzgados">
                     Volver

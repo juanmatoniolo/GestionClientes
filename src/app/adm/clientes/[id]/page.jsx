@@ -122,16 +122,16 @@ export default function EditarCliente() {
 	if (loading)
 		return (
 			<main className="container py-4" aria-busy="true">
-				<Loading/>
+				<Loading />
 			</main>
 		);
 
 	if (!data)
 		return (
 			<main className="container py-4">
-				<div>
-					cargando ... 
-				</div>
+				
+					<Loading />
+				
 				<Link className="btn btn-outline-secondary" href="/adm/clientes">
 					Volver
 				</Link>
