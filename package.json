@@ -12,7 +12,6 @@
     "@react-pdf/renderer": "^4.3.0",
     "@tailwindcss/postcss": "^4.1.13",
     "@vercel/speed-insights": "^1.2.0",
-    "boostrap": "^2.0.0",
     "bootstrap": "^5.3.8",
     "firebase": "^12.3.0",
     "next": "^15.5.3",
