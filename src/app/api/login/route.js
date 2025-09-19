@@ -1,48 +1,35 @@
-// app/api/login/route.js
 import { NextResponse } from "next/server";
-import { checkCredentials } from "@/lib/auth";
-import crypto from "crypto";
 
 const COOKIE = "app_session";
 const TTL = 60 * 60 * 8; // 8 horas
 
-function generateToken(email) {
-	const secret = process.env.APP_SESSION_SECRET || "default_secret";
-	return crypto
-		.createHmac("sha256", secret)
-		.update(email + Date.now())
-		.digest("hex");
+function checkCredentials(email, pass) {
+	return (
+		(email === process.env.APP_USER_1_EMAIL &&
+			pass === process.env.APP_USER_1_PASS) ||
+		(email === process.env.APP_USER_2_EMAIL &&
+			pass === process.env.APP_USER_2_PASS)
+	);
 }
 
 export async function POST(req) {
-	let email, password;
-	const ct = req.headers.get("content-type") || "";
+	const form = await req.formData();
+	const email = form.get("email");
+	const password = form.get("password");
 
-	if (ct.includes("form")) {
-		const form = await req.formData();
-		email = form.get("email");
-		password = form.get("password");
-	} else {
-		const body = await req.json().catch(() => ({}));
-		email = body.email;
-		password = body.password;
-	}
-
-	if (!email || !password || !checkCredentials(email, password)) {
+	// Validar
+	if (!checkCredentials(email, password)) {
 		return NextResponse.json(
 			{ ok: false, error: "Credenciales inválidas" },
 			{ status: 401 }
 		);
 	}
 
-	// Generar token
-	const token = generateToken(email);
-
-	// Redirección real (302)
+	// Redirigir a /adm si es válido
 	const res = NextResponse.redirect(new URL("/adm", req.url));
 
-	// Seteamos la cookie de sesión
-	res.cookies.set(COOKIE, token, {
+	// Podés setear una cookie básica si querés mantener sesión
+	res.cookies.set(COOKIE, "ok", {
 		httpOnly: true,
 		sameSite: "lax",
 		maxAge: TTL,
