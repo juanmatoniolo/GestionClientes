@@ -1,5 +1,6 @@
 "use client";
 
+import Navbar from "@/components/Nav";
 import { useState } from "react";
 
 export default function LoginPage() {
@@ -25,30 +26,33 @@ export default function LoginPage() {
     };
 
     return (
-        <main className="container py-5">
-            <div className="row justify-content-center">
-                <div className="col-12 col-md-6 col-lg-5">
-                    <div className="card shadow-sm">
-                        <div className="card-body">
-                            <h2 className="h4 mb-3">Iniciar sesión</h2>
-                            <form onSubmit={handleSubmit}>
-                                <div className="mb-3">
-                                    <label className="form-label">Email</label>
-                                    <input type="text" name="email" className="form-control" required />
-                                </div>
-                                <div className="mb-3">
-                                    <label className="form-label">Contraseña</label>
-                                    <input type="password" name="password" className="form-control" required />
-                                </div>
-                                <button className="btn btn-primary w-100" type="submit">
-                                    Entrar
-                                </button>
-                                {error && <div className="alert alert-danger mt-3">{error}</div>}
-                            </form>
+        <>
+            <Navbar />
+            <main className="container py-5">
+                <div className="row justify-content-center">
+                    <div className="col-12 col-md-6 col-lg-5">
+                        <div className="card shadow-sm">
+                            <div className="card-body">
+                                <h2 className="h4 mb-3">Iniciar sesión</h2>
+                                <form onSubmit={handleSubmit}>
+                                    <div className="mb-3">
+                                        <label className="form-label">Email</label>
+                                        <input type="text" name="email" className="form-control" required />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="form-label">Contraseña</label>
+                                        <input type="password" name="password" className="form-control" required />
+                                    </div>
+                                    <button className="btn btn-primary w-100" type="submit">
+                                        Entrar
+                                    </button>
+                                    {error && <div className="alert alert-danger mt-3">{error}</div>}
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </main>
+            </main>
+        </>
     );
 }
