@@ -1,27 +1,24 @@
-// middleware.js
+import { jwtVerify } from "jose";
 import { NextResponse } from "next/server";
 
-export function middleware(req) {
-	const { pathname } = req.nextUrl;
+const secret = new TextEncoder().encode(process.env.APP_SESSION_SECRET);
 
-	// Rutas públicas
-	if (
-		pathname === "/" ||
-		pathname.startsWith("/login") ||
-		pathname.startsWith("/api/login") ||
-		pathname.startsWith("/api/logout")
-	) {
-		return NextResponse.next();
-	}
+export async function middleware(req) {
+	const token = req.cookies.get("session")?.value;
 
-	// Rutas protegidas (incluye /adm y demás)
-	const token = req.cookies.get("app_session")?.value;
 	if (!token) {
-		const url = req.nextUrl.clone();
-		url.pathname = "/login";
-		return NextResponse.redirect(url);
+		return NextResponse.redirect(new URL("/login", req.url));
 	}
-	return NextResponse.next();
+
+	try {
+		await jwtVerify(token, secret);
+		return NextResponse.next();
+	} catch (err) {
+		return NextResponse.redirect(new URL("/login", req.url));
+	}
 }
 
-export const config = { matcher: ["/((?!_next|favicon.ico|public).*)"] };
+// Proteger solo /admin
+export const config = {
+	matcher: ["/admin/:path*"],
+};

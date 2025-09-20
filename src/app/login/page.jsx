@@ -1,40 +1,51 @@
-// app/login/page.jsx
-import Link from "next/link";
+"use client";
 
-export const metadata = {
-    title: "Iniciar sesión",
-    description: "Acceso al sistema",
-};
+import { useState } from "react";
 
 export default function LoginPage() {
+    const [error, setError] = useState("");
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const email = e.target.email.value;
+        const password = e.target.password.value;
+
+        const res = await fetch("/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+        });
+
+        if (res.ok) {
+            window.location.href = "/adm";
+        } else {
+            const data = await res.json();
+            setError(data.message || "Error al iniciar sesión");
+        }
+    };
+
     return (
         <main className="container py-5">
             <div className="row justify-content-center">
                 <div className="col-12 col-md-6 col-lg-5">
-                    <div className="text-center mb-4">
-                        <h1 className="h3">Iniciar sesión</h1>
-                        <p className="text-muted m-0">Acceso restringido — uso interno.</p>
-                    </div>
-
                     <div className="card shadow-sm">
                         <div className="card-body">
-                            {/* Importante: method="post" + action="/api/login" evita que email/pass vayan en la URL */}
-                            <form method="post" action="/api/login" autoComplete="off" noValidate>
+                            <h2 className="h4 mb-3">Iniciar sesión</h2>
+                            <form onSubmit={handleSubmit}>
                                 <div className="mb-3">
                                     <label className="form-label">Email</label>
-                                    <input className="form-control" type="email" name="email" required />
+                                    <input type="text" name="email" className="form-control" required />
                                 </div>
                                 <div className="mb-3">
                                     <label className="form-label">Contraseña</label>
-                                    <input className="form-control" type="password" name="password" required />
+                                    <input type="password" name="password" className="form-control" required />
                                 </div>
-                                <button className="btn btn-primary w-100" type="submit">Entrar</button>
+                                <button className="btn btn-primary w-100" type="submit">
+                                    Entrar
+                                </button>
+                                {error && <div className="alert alert-danger mt-3">{error}</div>}
                             </form>
                         </div>
-                    </div>
-
-                    <div className="text-center mt-3">
-                        <Link href="/" className="small">← Volver al inicio</Link>
                     </div>
                 </div>
             </div>
