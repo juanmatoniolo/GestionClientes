@@ -1,15 +1,18 @@
 import { NextResponse } from "next/server";
 
-const COOKIE = "app_session";
+export async function POST() {
+	const res = NextResponse.redirect(
+		new URL(
+			"/login",
+			process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+		)
+	);
 
-export async function POST(req) {
-	// Borrar cookie de sesión
-	const res = NextResponse.redirect(new URL("/", req.url));
-	res.cookies.set(COOKIE, "", {
+	res.cookies.set("session", "", {
 		httpOnly: true,
-		sameSite: "lax",
-		maxAge: 0, // expira de inmediato
+		secure: process.env.NODE_ENV === "production",
 		path: "/",
+		maxAge: 0,
 	});
 
 	return res;
