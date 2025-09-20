@@ -20,5 +20,5 @@ export async function middleware(req) {
 
 // Proteger solo /admin
 export const config = {
-	matcher: ["/admin/:path*"],
+	matcher: ["/adm/:path*"],
 };
