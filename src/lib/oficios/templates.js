@@ -55,7 +55,7 @@ ${direccionDest}
 
 S / D
 
-Me dirijo a usted en carácter de letrado patrocinante de la parte peticionante en relación a los autos caratulados “{{expediente}} - {{caratula}}” que tramita ante el {{juzgado.nombre}}, a cargo de {{juzgado.juez}}, {{juzgado.secretaria}}, sito en {{juzgado.domicilio}}, a fin de {{finalidad}}.
+Me dirijo a usted en carácter de letrado patrocinante de la parte peticionante en relación a los autos caratulados “{{expediente}}” que tramita ante el {{juzgado.nombre}}, a cargo de {{juzgado.juez}}, {{juzgado.secretaria}}, sito en {{juzgado.domicilio}}, a fin de {{finalidad}}.
 `.trim();
 }
 
