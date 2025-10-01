@@ -76,7 +76,7 @@ export default function AdmPage() {
                                 Azopardo (PDF).
                             </p>
                             <div className="mt-auto d-grid">
-                                <Link className="btn btn-success" href="/adm/oficios/generar">
+                                <Link className="btn btn-success" href="/adm/oficios">
                                     Generar oficios
                                 </Link>
                             </div>

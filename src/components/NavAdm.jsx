@@ -23,7 +23,7 @@ const links = [
             { href: "/adm/clientes/nuevo", label: "Agregar cliente" },
         ],
     },
-    { href: "/adm/oficios/generar", label: "Oficios" },
+    { href: "/adm/oficios", label: "Oficios" },
 ];
 
 export default function NavAdm() {
