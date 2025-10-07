@@ -1,99 +1,165 @@
 import { NextResponse } from "next/server";
 import { adminRtdb } from "@/lib/firebaseAdmin";
+import { buildOficio } from "@/lib/oficios/templates";
 
-// Validación simple
-function validate(body) {
-	const required = ["clienteId", "juzgadoId", "tipo"];
-	for (const k of required) if (!body?.[k]) return `Falta ${k}`;
-	const tipos = ["azopardo", "migraciones", "interpol", "rnr", "renaper"];
-	if (!tipos.includes(body.tipo)) return "Tipo de oficio inválido";
-	return null;
+// -------------------- Helpers --------------------
+
+function parseDependencia(dep = "") {
+	if (!dep) return { fuero: "", numero: "", secretariaNumero: "" };
+
+	const parts = dep.split(/\s*-\s*/);
+	const juzgadoParte = parts[0] || "";
+	const secretariaParte = parts[1] || "";
+
+	// Extraemos número del juzgado
+	const numMatch = juzgadoParte.match(/\d+/);
+	const numero = numMatch ? numMatch[0] : "";
+
+	// Fuero sin la palabra "juzgado"
+	const fuero = juzgadoParte.replace(/juzgado/i, "").trim();
+
+	// Secretaría
+	const m = secretariaParte?.match(
+		/(secretar[íi]a|sec\.?)\s*(n[º°ro\.]*)?\s*(\d+)/i
+	);
+	const secretariaNumero = m?.[3] || "";
+
+	return { fuero, numero, secretariaNumero };
 }
 
-async function buildDestinatarios(juzgadoId) {
-	const snap = await adminRtdb.ref(`juzgados/${juzgadoId}`).get();
-	const j = snap.val();
-	if (!j) return [];
-	const dests = [];
-	for (const s of j.secretarias ?? []) {
-		for (const em of s.emails ?? []) dests.push(em);
-	}
-	return Array.from(new Set(dests));
+// Normalizar secretarias
+function normalizeSecretarias(secretarias) {
+	if (Array.isArray(secretarias)) return secretarias;
+	if (secretarias && typeof secretarias === "object")
+		return Object.values(secretarias);
+	return [];
 }
 
-async function getClienteSnapshot(clienteId) {
+// -------------------- Data Lookups --------------------
+
+async function getCliente(clienteId) {
 	const snap = await adminRtdb.ref(`clientes/${clienteId}`).get();
-	const c = snap.val();
-	if (!c) return {};
+	return snap.val() || null;
+}
+
+async function getAllJuzgados() {
+	const snap = await adminRtdb.ref("juzgados").get();
+	const val = snap.val() || {};
+	return Object.entries(val).map(([id, j]) => ({ id, ...j }));
+}
+
+function resolverJuzgado(cliente, juzgados = []) {
+	const { fuero, numero, secretariaNumero } = parseDependencia(
+		cliente?.dependencia || ""
+	);
+
+	const jz = juzgados.find(
+		(z) =>
+			String(z.numero) === String(numero) &&
+			(z.fuero || "").toLowerCase().includes(fuero.toLowerCase())
+	);
+	if (!jz) return null;
+
+	const secArr = normalizeSecretarias(jz.secretarias);
+	const sec =
+		secArr.find(
+			(s) => String(s.numero ?? "") === String(secretariaNumero)
+		) || null;
+
 	return {
-		nombre: `${(c.apellido ?? "").trim()} ${(
-			c.nombre ?? ""
-		).trim()}`.trim(),
-		dni: c.dni ?? "",
+		nombre: jz.titulo || `Juzgado ${jz.numero} ${jz.fuero}`,
+		juez: jz.juez || "",
+		secretaria: sec
+			? `${sec.titulo || `Secretaría Nº ${secretariaNumero}`} ${
+					sec.titular ? `a cargo de ${sec.titular}` : ""
+			  }`
+			: `Secretaría Nº ${secretariaNumero}`,
+		domicilio: jz.domicilio || "",
+		email: (sec?.emails && sec.emails[0]) || jz.email || "",
 	};
 }
 
-async function getJuzgadoSnapshot(juzgadoId) {
-	const snap = await adminRtdb.ref(`juzgados/${juzgadoId}`).get();
-	const j = snap.val();
-	if (!j) return {};
-	return { titulo: j.titulo ?? "", ciudad: j.ciudad ?? "" };
-}
+// -------------------- API ROUTES --------------------
 
+// GET: lista oficios (si querés histórico)
 export async function GET() {
-	try {
-		const snap = await adminRtdb
-			.ref("oficios")
-			.orderByChild("createdAt")
-			.get();
-		const val = snap.val() || {};
-		const list = Object.entries(val).map(([id, data]) => ({ id, ...data }));
-		list.sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
-		return NextResponse.json({ oficios: list }, { status: 200 });
-	} catch (e) {
-		console.error("GET /api/oficios error:", e);
-		return NextResponse.json(
-			{ error: "Error listando oficios" },
-			{ status: 500 }
-		);
-	}
+	return NextResponse.json({
+		ok: true,
+		msg: "usar POST para generar oficio",
+	});
 }
 
+// POST: generar oficio en base a cliente + juzgado + template
 export async function POST(req) {
 	try {
 		const body = await req.json();
-		const err = validate(body);
-		if (err) return NextResponse.json({ error: err }, { status: 400 });
+		const { clienteId, tipo, fechaAuto } = body;
 
-		const now = Date.now();
-		const destinatarios = body.destinatarios?.length
-			? body.destinatarios
-			: await buildDestinatarios(body.juzgadoId);
+		if (!clienteId || !tipo || !fechaAuto) {
+			return NextResponse.json(
+				{ error: "Faltan datos obligatorios" },
+				{ status: 400 }
+			);
+		}
 
+		// buscar cliente y juzgados
+		const cliente = await getCliente(clienteId);
+		if (!cliente)
+			return NextResponse.json(
+				{ error: "Cliente no encontrado" },
+				{ status: 404 }
+			);
+
+		const juzgados = await getAllJuzgados();
+		const juzgadoTpl = resolverJuzgado(cliente, juzgados);
+		if (!juzgadoTpl) {
+			return NextResponse.json(
+				{ error: "No se pudo resolver juzgado/secretaría" },
+				{ status: 400 }
+			);
+		}
+
+		// payload armado
 		const payload = {
-			clienteId: body.clienteId,
-			juzgadoId: body.juzgadoId,
-			tipo: body.tipo,
-			estado: "borrador",
-			titulo: body.titulo ?? `Oficio a ${body.tipo}`,
-			numeroExpediente: body.numeroExpediente ?? "",
-			destinatarios,
-			payload: body.payload ?? {},
-			clienteSnapshot: await getClienteSnapshot(body.clienteId),
-			juzgadoSnapshot: await getJuzgadoSnapshot(body.juzgadoId),
-			createdAt: now,
-			updatedAt: now,
-			createdBy: body.createdBy ?? null,
+			expediente: cliente.expediente || "",
+			caratula: `${(cliente.apellido || "").toUpperCase()}, ${(
+				cliente.nombre || ""
+			).toUpperCase()} s/ CIUDADANÍA`,
+			juzgado: juzgadoTpl,
+			estudio: { email: "abogado.santiagoroncero@gmail.com" },
+			cliente: {
+				apellido: cliente.apellido || "",
+				nombre: cliente.nombre || "",
+				sexo: cliente.sexo || cliente.genero || "",
+				domicilio: cliente.domicilioReal || cliente.domicilio || "",
+				pasaporte: cliente.pasaporteNumero || "",
+				dni: cliente.dni || "",
+				estadoCivil: cliente.estadoCivil || "",
+				fechaNacimiento: cliente.fechaNacimiento || "",
+				lugarNacimiento: cliente.lugarNacimiento || "",
+				padre: cliente.padre || "",
+				madre: cliente.madre || "",
+				fechaIngreso: cliente.fechaLlegada || "",
+				medioIngreso:
+					cliente.medioIngreso || cliente.medioTransporte || "",
+			},
+			auto: {
+				fechaTexto: fechaAuto,
+				textoComplementario:
+					"… recábese informes conforme art. 400 CPCC …",
+				firmante: juzgadoTpl.juez,
+			},
 		};
 
-		const ref = adminRtdb.ref("oficios").push();
-		await ref.set(payload);
+		// generar oficio
+		const html = buildOficio(tipo, payload, { format: "html" });
+		const text = buildOficio(tipo, payload, { format: "text" });
 
-		return NextResponse.json({ id: ref.key, ...payload }, { status: 201 });
+		return NextResponse.json({ html, text, payload }, { status: 200 });
 	} catch (e) {
 		console.error("POST /api/oficios error:", e);
 		return NextResponse.json(
-			{ error: "Error creando oficio" },
+			{ error: "Error generando oficio" },
 			{ status: 500 }
 		);
 	}

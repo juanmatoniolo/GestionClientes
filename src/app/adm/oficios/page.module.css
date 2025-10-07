@@ -1,334 +1,261 @@
-/* Variables locales al subtree de .page */
+/* =====================
+   Layout general
+===================== */
 .page {
-    --primary: #0d6efd;
-    --primary-08: rgba(13, 110, 253, .08);
-    --surface: #ffffff;
-    --text: #212529;
-    --muted: #6c757d;
-    --border: #e9ecef;
-
-    padding: 1.25rem;
-    max-width: 1100px;
-    margin: 0 auto;
-    color: var(--text);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  font-family: "Inter", system-ui, sans-serif;
+  color: #222;
+  min-height: 100vh;
+  background: #f8f9fa;
 }
 
 .headerRow {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: .75rem;
-    margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem;
 }
 
 .title {
-    margin: 0;
-    font-size: 1.4rem;
-    font-weight: 700;
-}
-
-.counterBadge {
-    display: inline-flex;
-    align-items: center;
-    gap: .4rem;
-    padding: .3rem .55rem;
-    border: 1px solid var(--border);
-    border-radius: .5rem;
-    background: #f8f9fa;
-    color: var(--primary);
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #333;
 }
 
 .grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-}
-
-@media (min-width: 992px) {
-    .grid {
-        grid-template-columns: 1.4fr .9fr;
-        align-items: start;
-    }
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 1.2rem;
 }
 
 .leftCol,
 .rightCol {
-    background: transparent;
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-.sectionHeader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: .5rem;
-    margin-bottom: .5rem;
-}
-
+/* =====================
+   Tarjetas de oficios
+===================== */
 .sectionTitle {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 700;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+  color: #444;
 }
 
-.actions {
-    display: flex;
-    gap: .5rem;
-}
-
-/* Cards grid */
-.cardsGrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: .55rem;
-}
-
-@media (min-width: 640px) {
-    .cardsGrid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-@media (min-width: 1024px) {
-    .cardsGrid {
-        grid-template-columns: repeat(4, 1fr);
-    }
-}
-
-/* Card pequeña y simple con selección marcada */
 .card {
-    position: relative;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: .5rem;
-    border: 2px solid var(--border);
-    border-radius: .6rem;
-    background: var(--surface);
-    padding: .5rem .6rem;
-    cursor: pointer;
-    transition: border-color .15s ease, background .15s ease, transform .05s ease, box-shadow .15s ease;
-    min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.6rem;
+  background: #f9fafb;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 0.4rem;
+  width: 100%;
+  text-align: left;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
 }
 
 .card:hover {
-    border-color: var(--primary);
+  background: #eef3ff;
+  border-color: #b3c5ff;
+  cursor: pointer;
 }
 
-.cardMarker {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: .3rem;
-    background: transparent;
-    border-radius: .6rem 0 0 .6rem;
-    transition: background .15s ease;
+.card.active {
+  background: #e0e7ff;
+  border-color: #5972f7;
+  font-weight: 500;
 }
 
-.active {
-    border-color: var(--primary);
-    background: color-mix(in srgb, var(--primary) 6%, white);
-    box-shadow: 0 4px 10px rgba(13, 110, 253, .12);
+/* =====================
+   Buscador de clientes
+===================== */
+.input {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s ease;
 }
 
-.active .cardMarker {
-    background: var(--primary);
-}
-
-.icon {
-    font-size: 18px;
-    color: var(--primary);
-}
-
-.cardTitle {
-    font-weight: 600;
-    font-size: .92rem;
-    line-height: 1.1;
-}
-
-.checkedPill {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 22px;
-    height: 22px;
-    border-radius: 999px;
-    background: var(--primary);
-    color: #fff;
-    box-shadow: 0 1px 5px rgba(13, 110, 253, .35);
-}
-
-/* Right column controls */
-.rightCol {
-    padding-top: .25rem;
-}
-
-.label {
-    display: block;
-    font-size: .85rem;
-    margin: .5rem 0 .25rem;
-    color: #495057;
-}
-
-.input,
-.select {
-    width: 100%;
-    border: 1px solid var(--border);
-    border-radius: .5rem;
-    padding: .55rem .65rem;
-    background: var(--surface);
-    color: var(--text);
-    outline: none;
-}
-
-.input:focus,
-.select:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 .15rem var(--primary-08);
-}
-
-/* Botones */
-.btnPrimary,
-.btnPrimaryOutline,
-.btnSecondary {
-    appearance: none;
-    border-radius: .6rem;
-    padding: .5rem .75rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform .05s ease, box-shadow .2s ease, background .2s ease, color .2s ease, border-color .2s ease;
-    border: 1px solid transparent;
-    background: transparent;
-}
-
-.btnPrimary {
-    background: var(--primary);
-    color: white;
-    border-color: var(--primary);
-    margin-top: .75rem;
-    width: 100%;
-}
-
-.btnPrimary:hover {
-    filter: brightness(0.95);
-}
-
-.btnPrimary:disabled {
-    opacity: .55;
-    cursor: not-allowed;
-}
-
-.btnPrimaryOutline {
-    border-color: var(--primary);
-    color: var(--primary);
-    background: white;
-}
-
-.btnPrimaryOutline:hover {
-    background: color-mix(in srgb, var(--primary) 7%, white);
-}
-
-.btnSecondary {
-    border-color: var(--border);
-    background: #f8f9fa;
-    color: #495057;
-}
-
-.btnSecondary:disabled {
-    opacity: .6;
-    cursor: not-allowed;
-}
-
-/* Preview section */
-.previewSection {
-    margin-top: 1.5rem;
-}
-
-.previewTitle {
-    margin: 0 0 .6rem 0;
-    font-weight: 800;
-    font-size: 1.05rem;
-}
-
-.previewGrid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: .6rem;
-}
-
-@media (min-width: 768px) {
-    .previewGrid {
-        grid-template-columns: 1fr 1fr;
-    }
-}
-
-.cardPreview {
-    border-radius: .6rem;
-    background: var(--surface);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, .08);
-}
-
-.cardPreviewBody {
-    padding: .8rem;
-}
-
-.cardPreviewTitle {
-    margin: 0 0 .2rem 0;
-    font-size: 1rem;
-    font-weight: 800;
-}
-
-.cardPreviewText {
-    margin: 0 0 .6rem 0;
-    color: var(--muted);
-}
-
-.previewBtns {
-    display: flex;
-    gap: .5rem;
-}
-
-/* Buscador */
-.searchInput {
-    margin-bottom: .4rem;
+.input:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.2);
 }
 
 .searchResults {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: .35rem;
-    max-height: 260px;
-    overflow: auto;
-    border: 1px solid var(--border);
-    border-radius: .5rem;
-    padding: .35rem;
-    background: #fff;
+  margin-top: 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  max-height: 260px;
+  overflow-y: auto;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
 }
 
 .resultItem {
-    text-align: left;
-    width: 100%;
-    border: 1px solid var(--border);
-    background: #fff;
-    border-radius: .5rem;
-    padding: .45rem .55rem;
-    cursor: pointer;
-    transition: border-color .15s ease, background .15s ease, transform .05s ease;
-    font-size: .92rem;
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #eee;
+  background: #fff;
+  transition: background 0.1s ease;
 }
 
 .resultItem:hover {
-    border-color: var(--primary);
-    background: #f8faff;
+  background: #f3f4ff;
 }
 
 .resultItemActive {
-    border-color: var(--primary);
-    background: color-mix(in srgb, var(--primary) 10%, white);
+  font-size: 0.95rem;
+  color: #111;
+  background: #eef2ff;
+  border: 1px solid #c3ccff;
+  border-radius: 6px;
+  padding: 0.5rem;
 }
 
 .resultEmpty {
-    color: var(--muted);
-    font-size: .9rem;
-    padding: .4rem;
+  padding: 0.6rem;
+  font-size: 0.85rem;
+  color: #777;
+  text-align: center;
+}
+
+/* =====================
+   Botones
+===================== */
+.btnPrimary {
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-top: 1rem;
+  width: 100%;
+  transition: background 0.2s ease;
+}
+
+.btnPrimary:hover {
+  background: #3e3acb;
+}
+
+.btnPrimary:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.btnPrimaryOutline {
+  background: white;
+  color: #4f46e5;
+  border: 1px solid #4f46e5;
+  border-radius: 8px;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.btnPrimaryOutline:hover {
+  background: #4f46e5;
+  color: white;
+}
+
+/* =====================
+   Previsualización
+===================== */
+.previewSection {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.cardPreview {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.2rem;
+  background: #fafafa;
+}
+
+.cardPreviewTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.cardPreviewText {
+  font-size: 0.9rem;
+  margin-bottom: 0.6rem;
+}
+
+.previewBtns {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+/* =====================
+   Documento judicial (PDF)
+===================== */
+.oficioDoc {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 12pt;
+  line-height: 1.5;
+  color: #000;
+  text-align: justify;
+  background: white;
+  padding: 25mm;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  max-width: 210mm;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.oficioDoc h1,
+.oficioDoc h2,
+.oficioDoc h3 {
+  font-family: "Times New Roman", Times, serif;
+  text-align: center;
+  font-weight: 700;
+  margin: 1rem 0;
+}
+
+.oficioDoc p {
+  margin: 0.6rem 0;
+  text-align: justify;
+}
+
+/* =====================
+   Responsividad
+===================== */
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rightCol {
+    order: -1;
+  }
+
+  .oficioDoc {
+    padding: 15mm;
+  }
 }
