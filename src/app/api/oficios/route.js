@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { adminRtdb } from "@/lib/firebaseAdmin";
+import { adminRtdb } from "@/lib/firebaseClient";
 import { buildOficio } from "@/lib/oficios/templates";
 
 // -------------------- Helpers --------------------
