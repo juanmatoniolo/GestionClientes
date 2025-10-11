@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { rtdb, dbRef, dbGet, dbSet, dbPush, dbUpdate } from "@/lib/firebaseClient";
+
 import { buildOficio } from "@/lib/oficios/templates";
 
 // -------------------- Helpers --------------------
