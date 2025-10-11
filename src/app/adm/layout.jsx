@@ -7,23 +7,23 @@ export const metadata = {
     description: "Aplicación web para gestión integral de clientes jurídicos",
     icons: {
         icon: [
-            { url: "/favicon-32x32.webp", media: "(prefers-color-scheme: light)" },
-            { url: "/favicon-32x32-dark.webp", media: "(prefers-color-scheme: dark)" }
+            { url: "./favicon-32x32.webp", media: "(prefers-color-scheme: light)" },
+            { url: "./favicon-32x32-dark.webp", media: "(prefers-color-scheme: dark)" }
         ],
         apple: [
-            { url: "/apple-touch-icon.webp", media: "(prefers-color-scheme: light)" },
-            { url: "/apple-touch-icon-dark.webp", media: "(prefers-color-scheme: dark)" }
+            { url: "./apple-touch-icon.webp", media: "(prefers-color-scheme: light)" },
+            { url: "./apple-touch-icon-dark.webp", media: "(prefers-color-scheme: dark)" }
         ]
     },
-    manifest: "/site.webmanifest",
+    manifest: "./site.webmanifest",
     openGraph: {
         title: "Gestor Legal – Clientes",
         description: "Gestor digital para abogados: centralizá expedientes, contactos y documentos.",
-        images: ["/og-image.webp"]
+        images: [".og-image.webp"]
     },
     twitter: {
         card: "summary_large_image",
-        images: ["/og-image.webp"]
+        images: ["./og-image.webp"]
     },
     themeColor: "#0d6efd",
 };
