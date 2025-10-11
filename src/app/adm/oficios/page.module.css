@@ -1,97 +1,208 @@
-/* =====================
-   Layout general
-===================== */
+/* ===========================
+   PAGE LAYOUT GENERAL
+=========================== */
 .page {
   display: flex;
   flex-direction: column;
-  padding: 1.5rem;
-  font-family: "Inter", system-ui, sans-serif;
-  color: #222;
   min-height: 100vh;
   background: #f8f9fa;
+  color: #222;
+  font-family: "Inter", system-ui, sans-serif;
+  padding: 1.5rem;
 }
 
+/* ===========================
+   HEADER
+=========================== */
 .headerRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .title {
-  font-size: 1.6rem;
+  font-size: 1.75rem;
   font-weight: 600;
-  color: #333;
+  color: #1f2937;
 }
 
+.counterBadge {
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  color: #1e3a8a;
+  font-size: 0.9rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+/* ===========================
+   GRID PRINCIPAL
+=========================== */
 .grid {
   display: grid;
-  grid-template-columns: 1fr 320px;
+  grid-template-columns: 1fr 360px;
   gap: 1.2rem;
 }
 
 .leftCol,
 .rightCol {
-  background: #fff;
+  background: #ffffff;
   border-radius: 12px;
   padding: 1rem;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-/* =====================
-   Tarjetas de oficios
-===================== */
+/* ===========================
+   TITULOS Y SECCIONES
+=========================== */
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
 .sectionTitle {
   font-size: 1rem;
   font-weight: 600;
-  margin-bottom: 0.6rem;
-  color: #444;
+  color: #374151;
+}
+
+/* ===========================
+   TARJETAS DE OFICIOS
+=========================== */
+.cardsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
 }
 
 .card {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
   gap: 0.6rem;
   background: #f9fafb;
-  border: 1px solid #ddd;
+  border: 1px solid #d1d5db;
   border-radius: 8px;
-  padding: 0.6rem 0.8rem;
-  margin-bottom: 0.4rem;
-  width: 100%;
-  text-align: left;
+  padding: 0.65rem 0.8rem;
   font-size: 0.9rem;
+  text-align: left;
   transition: all 0.2s ease;
 }
 
 .card:hover {
-  background: #eef3ff;
-  border-color: #b3c5ff;
+  background: #eef2ff;
+  border-color: #a5b4fc;
   cursor: pointer;
 }
 
 .card.active {
   background: #e0e7ff;
-  border-color: #5972f7;
-  font-weight: 500;
+  border-color: #4f46e5;
+  font-weight: 600;
 }
 
-/* =====================
-   Buscador de clientes
-===================== */
+.cardTitle {
+  flex: 1;
+}
+
+.icon {
+  color: #4f46e5;
+  font-size: 1rem;
+}
+
+.checkIcon {
+  color: #16a34a;
+  font-size: 1rem;
+}
+
+/* ===========================
+   BOTONES GENERALES
+=========================== */
+.btn {
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border 0.2s ease;
+}
+
+
+.btnPrimary {
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.65rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.btnPrimary:hover {
+  background: #4338ca;
+}
+
+.btnPrimaryOutline {
+  background: #fff;
+  color: #4f46e5;
+  border: 1px solid #4f46e5;
+  border-radius: 8px;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.9rem;
+  width: 100%;
+}
+
+.btnPrimaryOutline:hover {
+  background: #4f46e5;
+  color: #fff;
+}
+
+.btnSecondary {
+  background: #f3f4f6;
+  color: #111827;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+.btnSecondary:hover {
+  background: #e5e7eb;
+}
+
+.btnSuccessOutline {
+  background: #fff;
+  color: #16a34a;
+  border: 1px solid #16a34a;
+  border-radius: 8px;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.9rem;
+}
+
+.btnSuccessOutline:hover {
+  background: #16a34a;
+  color: #fff;
+}
+
+/* ===========================
+   BUSCADOR DE CLIENTES
+=========================== */
 .input {
   width: 100%;
   padding: 0.55rem 0.7rem;
-  border: 1px solid #ccc;
+  border: 1px solid #d1d5db;
   border-radius: 6px;
   font-size: 0.9rem;
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .input:focus {
   border-color: #4f46e5;
-  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.2);
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
 }
 
 .searchResults {
@@ -108,76 +219,35 @@
   display: block;
   width: 100%;
   text-align: left;
-  padding: 0.45rem 0.7rem;
+  padding: 0.5rem 0.7rem;
   font-size: 0.9rem;
   border-bottom: 1px solid #eee;
   background: #fff;
-  transition: background 0.1s ease;
 }
 
 .resultItem:hover {
-  background: #f3f4ff;
+  background: #eef2ff;
 }
 
 .resultItemActive {
-  font-size: 0.95rem;
-  color: #111;
   background: #eef2ff;
-  border: 1px solid #c3ccff;
+  border: 1px solid #c7d2fe;
   border-radius: 6px;
   padding: 0.5rem;
+  color: #1e3a8a;
+  font-size: 0.95rem;
 }
 
 .resultEmpty {
   padding: 0.6rem;
   font-size: 0.85rem;
-  color: #777;
+  color: #6b7280;
   text-align: center;
 }
 
-/* =====================
-   Botones
-===================== */
-.btnPrimary {
-  background: #4f46e5;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 0.6rem 1rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-  margin-top: 1rem;
-  width: 100%;
-  transition: background 0.2s ease;
-}
-
-.btnPrimary:hover {
-  background: #3e3acb;
-}
-
-.btnPrimary:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
-
-.btnPrimaryOutline {
-  background: white;
-  color: #4f46e5;
-  border: 1px solid #4f46e5;
-  border-radius: 8px;
-  padding: 0.5rem 0.8rem;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-}
-
-.btnPrimaryOutline:hover {
-  background: #4f46e5;
-  color: white;
-}
-
-/* =====================
-   Previsualización
-===================== */
+/* ===========================
+   SECCIÓN DE PREVIEWS
+=========================== */
 .previewSection {
   margin-top: 2rem;
   padding: 1rem;
@@ -186,34 +256,37 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
+.previewTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
 .cardPreview {
-  border: 1px solid #ddd;
+  border: 1px solid #e5e7eb;
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1.2rem;
   background: #fafafa;
 }
 
-.cardPreviewTitle {
+.cardPreview h5 {
   font-size: 1rem;
   font-weight: 600;
   margin-bottom: 0.4rem;
+  color: #111;
 }
 
-.cardPreviewText {
+.cardPreview p {
   font-size: 0.9rem;
+  color: #374151;
   margin-bottom: 0.6rem;
 }
 
-.previewBtns {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 0.6rem;
-}
-
-/* =====================
-   Documento judicial (PDF)
-===================== */
+/* ===========================
+   DOCUMENTO DE OFICIO (PREVIEW)
+=========================== */
 .oficioDoc {
   font-family: "Times New Roman", Times, serif;
   font-size: 12pt;
@@ -222,20 +295,11 @@
   text-align: justify;
   background: white;
   padding: 25mm;
-  border: 1px solid #eee;
+  border: 1px solid #e5e7eb;
   border-radius: 8px;
   max-width: 210mm;
   margin: 0 auto;
   box-sizing: border-box;
-}
-
-.oficioDoc h1,
-.oficioDoc h2,
-.oficioDoc h3 {
-  font-family: "Times New Roman", Times, serif;
-  text-align: center;
-  font-weight: 700;
-  margin: 1rem 0;
 }
 
 .oficioDoc p {
@@ -243,10 +307,19 @@
   text-align: justify;
 }
 
-/* =====================
-   Responsividad
-===================== */
-@media (max-width: 900px) {
+.oficioDoc h1,
+.oficioDoc h2,
+.oficioDoc h3 {
+  font-family: "Times New Roman", Times, serif;
+  text-align: center;
+  font-weight: bold;
+  margin: 1rem 0;
+}
+
+/* ===========================
+   RESPONSIVIDAD
+=========================== */
+@media (max-width: 960px) {
   .grid {
     grid-template-columns: 1fr;
   }
@@ -257,5 +330,36 @@
 
   .oficioDoc {
     padding: 15mm;
+  }
+
+  .headerRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .page {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: 1.4rem;
+  }
+
+  .input {
+    font-size: 0.85rem;
+  }
+
+  .btnPrimary,
+  .btnPrimaryOutline,
+  .btnSuccessOutline {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.7rem;
+  }
+
+  .oficioDoc {
+    padding: 10mm;
+    font-size: 11pt;
   }
 }

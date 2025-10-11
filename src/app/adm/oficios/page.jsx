@@ -8,31 +8,41 @@ import Fuse from "fuse.js";
 import {
     fetchClientesToArray,
     fetchJuzgadosToArray,
-    parseDependencia,
-    findJuzgadoAndSecretaria,
-    buildJuzgadoFromLookup,
+    resolverDatosJuzgadoYSecretaria
 } from "./components/utils";
 
 import { buildOficio } from "@/lib/oficios/templates";
 
-/* ===================== Tipos disponibles ===================== */
+/* ===================== Tipos de oficios disponibles ===================== */
 const OFICIOS = [
     { id: "azopardo", nombre: "Azopardo (Policía Federal)" },
-    { id: "migraciones", nombre: "Migraciones" },
     { id: "interpol", nombre: "Interpol" },
-    { id: "reincidencia", nombre: "Registro Nacional de Reincidencia" },
     { id: "renaper", nombre: "RENAPER" },
+    { id: "reincidencia", nombre: "Registro Nacional de Reincidencia" },
+    { id: "migraciones", nombre: "Migraciones" },
+
+    // Art. 400
+    { id: "azopardo-art400", nombre: "Azopardo (Art. 400 CPCC)" },
+    { id: "interpol-art400", nombre: "Interpol (Art. 400 CPCC)" },
+    { id: "renaper-art400", nombre: "RENAPER (Art. 400 CPCC)" },
+    { id: "reincidencia-art400", nombre: "RNR (Art. 400 CPCC)" },
+    { id: "migraciones-art400", nombre: "Migraciones (Art. 400 CPCC)" },
 ];
 
 const ORG_CODE = {
     azopardo: "AZOPARDO",
-    migraciones: "MIGRACIONES",
     interpol: "INTERPOL",
-    reincidencia: "RNR",
     renaper: "RENAPER",
+    reincidencia: "RNR",
+    migraciones: "MIGRACIONES",
+    "azopardo-art400": "AZOPARDO-ART400",
+    "interpol-art400": "INTERPOL-ART400",
+    "renaper-art400": "RENAPER-ART400",
+    "reincidencia-art400": "RNR-ART400",
+    "migraciones-art400": "MIGRACIONES-ART400",
 };
 
-/* ===================== UI: tarjetas ===================== */
+/* ===================== Tarjetas de selección ===================== */
 function SelectableCard({ id, label, selected, onToggle }) {
     return (
         <button
@@ -49,7 +59,6 @@ function SelectableCard({ id, label, selected, onToggle }) {
             aria-checked={selected}
             aria-pressed={selected}
         >
-            <span className={styles.cardMarker} aria-hidden="true" />
             <FaFileAlt className={styles.icon} aria-hidden="true" />
             <span className={styles.cardTitle}>{label}</span>
             {selected && (
@@ -61,7 +70,7 @@ function SelectableCard({ id, label, selected, onToggle }) {
     );
 }
 
-/* ===================== PAGE (UI) ===================== */
+/* ===================== Página principal ===================== */
 export default function OficiosPage() {
     const [selectedOficios, setSelectedOficios] = useState([]);
     const [clientes, setClientes] = useState([]);
@@ -72,7 +81,26 @@ export default function OficiosPage() {
     const [generatedOficios, setGeneratedOficios] = useState([]);
     const htmlRefs = useRef({});
 
-    /* --- Cargar datos iniciales --- */
+    /* === Persistencia en localStorage === */
+    useEffect(() => {
+        const saved = JSON.parse(localStorage.getItem("oficiosState") || "{}");
+        if (saved.selectedOficios) setSelectedOficios(saved.selectedOficios);
+        if (saved.selectedClienteId) setSelectedClienteId(saved.selectedClienteId);
+        if (saved.fechaAutoTexto) setFechaAutoTexto(saved.fechaAutoTexto);
+        if (saved.generatedOficios) setGeneratedOficios(saved.generatedOficios);
+    }, []);
+
+    useEffect(() => {
+        const data = {
+            selectedOficios,
+            selectedClienteId,
+            fechaAutoTexto,
+            generatedOficios,
+        };
+        localStorage.setItem("oficiosState", JSON.stringify(data));
+    }, [selectedOficios, selectedClienteId, fechaAutoTexto, generatedOficios]);
+
+    /* === Carga de datos (clientes + juzgados) === */
     useEffect(() => {
         (async () => {
             const [cli, juz] = await Promise.all([
@@ -84,7 +112,7 @@ export default function OficiosPage() {
         })();
     }, []);
 
-    /* ===================== Buscador de clientes ===================== */
+    /* === Buscador inteligente === */
     const clientesPreprocesados = useMemo(() => {
         return clientes.map((c) => ({
             ...c,
@@ -124,17 +152,26 @@ export default function OficiosPage() {
 
     const clearSelection = () => setSelectedOficios([]);
 
-    /* --- Resolver juzgado --- */
+    /* === Resolver juzgado automáticamente === */
     async function resolverJuzgadoDesdeCliente(cliente) {
         const dep = (cliente?.dependencia || "").trim();
-        if (!dep) return null;
-        const { titulo, secretariaNumero } = parseDependencia(dep);
-        const { jz, sec } = findJuzgadoAndSecretaria(juzgados, titulo, secretariaNumero);
-        if (!jz) return null;
-        return buildJuzgadoFromLookup(jz, sec, secretariaNumero);
+        if (!dep) {
+            console.warn("⚠️ Cliente sin dependencia:", cliente);
+            return null;
+        }
+
+        const juzgadoTpl = resolverDatosJuzgadoYSecretaria(dep, juzgados);
+
+        if (!juzgadoTpl) {
+            console.warn("❌ No se encontró coincidencia de juzgado:", dep);
+            return null;
+        }
+
+        console.log("🏛️ Juzgado resuelto automáticamente:", juzgadoTpl);
+        return juzgadoTpl;
     }
 
-    /* ===================== Generar oficios ===================== */
+    /* === Generar oficios === */
     const generarOficios = async () => {
         if (!selectedCliente) return alert("Elegí un cliente.");
         if (selectedOficios.length === 0)
@@ -176,15 +213,15 @@ export default function OficiosPage() {
         setGeneratedOficios(previews);
     };
 
-    /* ===================== Descargar PDF ===================== */
+    /* === Descargar PDF === */
     const downloadPdf = async (oficio) => {
         try {
             const fileName = `${oficio.orgCode} - ${oficio.cliente}.pdf`;
-
             const res = await fetch("/api/pdf", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
+                    tipo: oficio.id,
                     html: oficio.html,
                     filename: fileName,
                 }),
@@ -212,29 +249,23 @@ export default function OficiosPage() {
         }
     };
 
-    /* ===================== Render ===================== */
+    /* === Render === */
     return (
         <main className={styles.page}>
             <header className={styles.headerRow}>
-                <h2 className={styles.title}>Dashboard de Oficios</h2>
+                <h2 className={styles.title}>Dashboard de Oficios Judiciales</h2>
                 <span className={styles.counterBadge}>
                     Seleccionados: <strong>{selectedOficios.length}</strong>
                 </span>
             </header>
 
             <div className={styles.grid}>
-                {/* ----------------- Columna izquierda ----------------- */}
+                {/* === Lista de oficios === */}
                 <section className={styles.leftCol}>
-                    <div className={styles.sectionHeader}>
-                        <h5 className={styles.sectionTitle}>Oficios</h5>
-                        <button
-                            className={styles.btnSecondary}
-                            type="button"
-                            onClick={clearSelection}
-                        >
-                            Limpiar
-                        </button>
-                    </div>
+                    <h5 className={styles.sectionTitle}>Oficios disponibles</h5>
+                    <button className={styles.btnSecondary} onClick={clearSelection}>
+                        Limpiar selección
+                    </button>
 
                     <div className={styles.cardsGrid}>
                         {OFICIOS.map((o) => (
@@ -249,9 +280,9 @@ export default function OficiosPage() {
                     </div>
                 </section>
 
-                {/* ----------------- Columna derecha ----------------- */}
+                {/* === Cliente === */}
                 <aside className={styles.rightCol}>
-                    <h5 className={styles.sectionTitle}>Cliente</h5>
+                    <h5 className={styles.sectionTitle}>Datos del cliente</h5>
 
                     {selectedCliente ? (
                         <div className={styles.resultItemActive}>
@@ -279,26 +310,24 @@ export default function OficiosPage() {
                                 value={q}
                                 onChange={(e) => setQ(e.target.value)}
                             />
-
                             {q.trim().length >= 2 && (
                                 <div className={styles.searchResults}>
                                     {rows.length > 0 ? (
-                                        rows.map((c) => {
-                                            const label = `${(c.apellido || "").trim()} ${(c.nombre || "").trim()}${c.dni ? ` · DNI ${c.dni}` : ""}${c.expediente ? ` · Exp. ${c.expediente}` : ""}`;
-                                            return (
-                                                <button
-                                                    key={c.id}
-                                                    type="button"
-                                                    className={styles.resultItem}
-                                                    onClick={() => {
-                                                        setSelectedClienteId(c.id);
-                                                        setQ("");
-                                                    }}
-                                                >
-                                                    {label}
-                                                </button>
-                                            );
-                                        })
+                                        rows.map((c) => (
+                                            <button
+                                                key={c.id}
+                                                type="button"
+                                                className={styles.resultItem}
+                                                onClick={() => {
+                                                    setSelectedClienteId(c.id);
+                                                    setQ("");
+                                                }}
+                                            >
+                                                {(c.apellido || "")} {(c.nombre || "")}{" "}
+                                                {c.dni ? `· DNI ${c.dni}` : ""}{" "}
+                                                {c.expediente ? `· Exp. ${c.expediente}` : ""}
+                                            </button>
+                                        ))
                                     ) : (
                                         <div className={styles.resultEmpty}>Sin resultados…</div>
                                     )}
@@ -308,7 +337,7 @@ export default function OficiosPage() {
                     )}
 
                     <label className={styles.label} style={{ marginTop: "1rem" }}>
-                        Fecha del auto (ej: 11 de NOVIEMBRE de 2024)
+                        Fecha del auto
                     </label>
                     <input
                         className={styles.input}
@@ -317,17 +346,13 @@ export default function OficiosPage() {
                         placeholder="11 de NOVIEMBRE de 2024"
                     />
 
-                    <button
-                        type="button"
-                        className={styles.btnPrimary}
-                        onClick={generarOficios}
-                    >
+                    <button className={styles.btnPrimary} onClick={generarOficios}>
                         Generar oficios
                     </button>
                 </aside>
             </div>
 
-            {/* ----------------- Sección de previews ----------------- */}
+            {/* === Previsualización === */}
             {generatedOficios.length > 0 && (
                 <section className={styles.previewSection}>
                     <h4 className={styles.previewTitle}>Oficios generados</h4>
@@ -344,7 +369,7 @@ export default function OficiosPage() {
                                             className={styles.btnSuccessOutline}
                                             onClick={() => downloadPdf(oficio)}
                                         >
-                                            Descargar PDF (Judicial A4)
+                                            Descargar PDF (A4)
                                         </button>
                                     </div>
                                     <div
