@@ -1,0 +1,67 @@
+{
+  "name": "Gestor Legal – Clientes",
+  "short_name": "GestorLegal",
+  "description": "Aplicación web para abogados que centraliza la gestión de clientes, expedientes y oficios.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f8f9fa",
+  "theme_color": "#0d6efd",
+  "categories": ["productivity", "business", "legal"],
+  "dir": "ltr",
+  "lang": "es-AR",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.webp",
+      "sizes": "192x192",
+      "type": "image/webp",
+      "purpose": "any",
+      "media": "(prefers-color-scheme: light)"
+    },
+    {
+      "src": "/android-chrome-512x512.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any",
+      "media": "(prefers-color-scheme: light)"
+    },
+    {
+      "src": "/android-chrome-192x192-dark.webp",
+      "sizes": "192x192",
+      "type": "image/webp",
+      "purpose": "any",
+      "media": "(prefers-color-scheme: dark)"
+    },
+    {
+      "src": "/android-chrome-512x512-dark.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any",
+      "media": "(prefers-color-scheme: dark)"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Clientes",
+      "short_name": "Clientes",
+      "description": "Ver y administrar la lista de clientes.",
+      "url": "/clientes",
+      "icons": [{ "src": "/favicon-32x32.webp", "sizes": "32x32" }]
+    },
+    {
+      "name": "Oficios",
+      "short_name": "Oficios",
+      "description": "Generar y descargar oficios legales.",
+      "url": "/oficios",
+      "icons": [{ "src": "/favicon-32x32.webp", "sizes": "32x32" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/og-image.webp",
+      "sizes": "1200x630",
+      "type": "image/webp"
+    }
+  ]
+}
