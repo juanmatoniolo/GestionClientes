@@ -17,7 +17,7 @@ export const metadata = {
       { url: "/apple-touch-icon-dark.webp", media: "(prefers-color-scheme: dark)" }
     ]
   },
-  manifest: "/site.webmanifest",
+
 
   // 🔹 Configuración Open Graph (Facebook, WhatsApp, LinkedIn)
   openGraph: {
