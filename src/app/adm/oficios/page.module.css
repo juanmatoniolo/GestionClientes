@@ -461,3 +461,63 @@
   background: #28a745;
   transition: width 0.3s ease;
 }
+.previewBtnsGroup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.btnSuccess {
+  background-color: #28a745;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btnSuccess[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btnSuccessOutline {
+  border: 1px solid #28a745;
+  color: #28a745;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btnSuccessOutline:hover {
+  background: #28a745;
+  color: white;
+}
+
+.progressContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.progressBar {
+  width: 160px;
+  height: 10px;
+  background: #e0e0e0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: #28a745;
+  transition: width 0.3s ease;
+}

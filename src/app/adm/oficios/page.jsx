@@ -44,7 +44,7 @@ const ORG_CODE = {
     "migraciones-art400": "MIGRACIONES-ART400",
 };
 
-/* ===================== Tarjetas de selección ===================== */
+/* ===================== Tarjetas ===================== */
 function SelectableCard({ id, label, selected, onToggle }) {
     return (
         <button
@@ -81,6 +81,8 @@ export default function OficiosPage() {
     const [selectedClienteId, setSelectedClienteId] = useState("");
     const [fechaAutoTexto, setFechaAutoTexto] = useState("");
     const [generatedOficios, setGeneratedOficios] = useState([]);
+    const [isZipping, setIsZipping] = useState(false);
+    const [progress, setProgress] = useState(0);
     const htmlRefs = useRef({});
 
     /* === Persistencia local === */
@@ -212,14 +214,19 @@ export default function OficiosPage() {
         }
     };
 
-    /* === Descargar todos (ZIP) === */
+    /* === Descargar todos (ZIP) con barra de progreso === */
     const downloadAllPdfs = async () => {
         if (generatedOficios.length === 0) return;
+
+        setIsZipping(true);
+        setProgress(0);
+
         const zip = new JSZip();
 
-        for (const oficio of generatedOficios) {
+        for (let i = 0; i < generatedOficios.length; i++) {
+            const oficio = generatedOficios[i];
+            const fileName = `${oficio.orgCode} - ${oficio.cliente}.pdf`;
             try {
-                const fileName = `${oficio.orgCode} - ${oficio.cliente}.pdf`;
                 const res = await fetch("/api/pdf", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -230,10 +237,14 @@ export default function OficiosPage() {
             } catch (e) {
                 console.error(`⚠️ Error con ${oficio.id}:`, e);
             }
+            setProgress(((i + 1) / generatedOficios.length) * 100);
         }
 
         const zipBlob = await zip.generateAsync({ type: "blob" });
         saveAs(zipBlob, "oficios_generados.zip");
+
+        setIsZipping(false);
+        setProgress(100);
     };
 
     /* === Render === */
@@ -247,6 +258,7 @@ export default function OficiosPage() {
             </header>
 
             <div className={styles.grid}>
+                {/* === Lista de oficios === */}
                 <section className={styles.leftCol}>
                     <h5 className={styles.sectionTitle}>Oficios disponibles</h5>
                     <button className={styles.btnSecondary} onClick={clearSelection}>
@@ -266,6 +278,7 @@ export default function OficiosPage() {
                     </div>
                 </section>
 
+                {/* === Cliente === */}
                 <aside className={styles.rightCol}>
                     <h5 className={styles.sectionTitle}>Datos del cliente</h5>
 
@@ -340,14 +353,27 @@ export default function OficiosPage() {
                 <section className={styles.previewSection}>
                     <h4 className={styles.previewTitle}>Oficios generados</h4>
 
-                    {/* Botonera unificada */}
                     <div className={styles.previewBtnsGroup}>
                         <button
                             className={styles.btnSuccess}
                             onClick={downloadAllPdfs}
+                            disabled={isZipping}
                         >
                             <FaDownload /> Descargar todos (ZIP)
                         </button>
+
+                        {isZipping && (
+                            <div className={styles.progressContainer}>
+                                <div className={styles.progressBar}>
+                                    <div
+                                        className={styles.progressFill}
+                                        style={{ width: `${progress}%` }}
+                                    ></div>
+                                </div>
+                                <span>{progress.toFixed(0)}%</span>
+                            </div>
+                        )}
+
                         {generatedOficios.map((oficio) => (
                             <button
                                 key={oficio.id}
