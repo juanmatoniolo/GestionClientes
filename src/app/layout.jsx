@@ -23,7 +23,7 @@ export const metadata = {
   openGraph: {
     title: "Ciudadanías – Oficios",
     description: "Generá, gestioná y descargá oficios legales en segundos. Ideal para abogados y estudios jurídicos.",
-    url: "https://tusitio.com",
+    url: "https://gestion-clientes-delta.vercel.app/",
     siteName: "Ciudadanías – Oficios",
     images: [
       {
