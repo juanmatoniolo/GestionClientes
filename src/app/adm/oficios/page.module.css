@@ -363,3 +363,39 @@
     font-size: 11pt;
   }
 }
+
+.previewBtnsGroup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    align-items: center;
+}
+
+.btnSuccess {
+    background-color: #28a745;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+
+.btnSuccessOutline {
+    border: 1px solid #28a745;
+    color: #28a745;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.btnSuccessOutline:hover {
+    background: #28a745;
+    color: white;
+}

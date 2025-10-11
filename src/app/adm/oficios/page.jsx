@@ -1,14 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FaFileAlt, FaCheck } from "react-icons/fa";
+import { FaFileAlt, FaCheck, FaDownload } from "react-icons/fa";
 import styles from "./page.module.css";
 import Fuse from "fuse.js";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 
 import {
     fetchClientesToArray,
     fetchJuzgadosToArray,
-    resolverDatosJuzgadoYSecretaria
+    resolverDatosJuzgadoYSecretaria,
 } from "./components/utils";
 
 import { buildOficio } from "@/lib/oficios/templates";
@@ -81,7 +83,7 @@ export default function OficiosPage() {
     const [generatedOficios, setGeneratedOficios] = useState([]);
     const htmlRefs = useRef({});
 
-    /* === Persistencia en localStorage === */
+    /* === Persistencia local === */
     useEffect(() => {
         const saved = JSON.parse(localStorage.getItem("oficiosState") || "{}");
         if (saved.selectedOficios) setSelectedOficios(saved.selectedOficios);
@@ -100,7 +102,7 @@ export default function OficiosPage() {
         localStorage.setItem("oficiosState", JSON.stringify(data));
     }, [selectedOficios, selectedClienteId, fechaAutoTexto, generatedOficios]);
 
-    /* === Carga de datos (clientes + juzgados) === */
+    /* === Carga de datos === */
     useEffect(() => {
         (async () => {
             const [cli, juz] = await Promise.all([
@@ -112,7 +114,7 @@ export default function OficiosPage() {
         })();
     }, []);
 
-    /* === Buscador inteligente === */
+    /* === Buscador === */
     const clientesPreprocesados = useMemo(() => {
         return clientes.map((c) => ({
             ...c,
@@ -125,15 +127,7 @@ export default function OficiosPage() {
     const rows = useMemo(() => {
         if (!q.trim() || q.trim().length < 2) return [];
         const fuse = new Fuse(clientesPreprocesados, {
-            keys: [
-                "apellido",
-                "nombre",
-                "dni",
-                "expediente",
-                "expedienteDigits",
-                "mail",
-                "telefono",
-            ],
+            keys: ["apellido", "nombre", "dni", "expediente", "expedienteDigits", "mail", "telefono"],
             threshold: 0.35,
             distance: 100,
         });
@@ -152,22 +146,11 @@ export default function OficiosPage() {
 
     const clearSelection = () => setSelectedOficios([]);
 
-    /* === Resolver juzgado automáticamente === */
+    /* === Resolver juzgado === */
     async function resolverJuzgadoDesdeCliente(cliente) {
         const dep = (cliente?.dependencia || "").trim();
-        if (!dep) {
-            console.warn("⚠️ Cliente sin dependencia:", cliente);
-            return null;
-        }
-
+        if (!dep) return null;
         const juzgadoTpl = resolverDatosJuzgadoYSecretaria(dep, juzgados);
-
-        if (!juzgadoTpl) {
-            console.warn("❌ No se encontró coincidencia de juzgado:", dep);
-            return null;
-        }
-
-        console.log("🏛️ Juzgado resuelto automáticamente:", juzgadoTpl);
         return juzgadoTpl;
     }
 
@@ -213,40 +196,44 @@ export default function OficiosPage() {
         setGeneratedOficios(previews);
     };
 
-    /* === Descargar PDF === */
+    /* === Descargar PDF individual === */
     const downloadPdf = async (oficio) => {
         try {
             const fileName = `${oficio.orgCode} - ${oficio.cliente}.pdf`;
             const res = await fetch("/api/pdf", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    tipo: oficio.id,
-                    html: oficio.html,
-                    filename: fileName,
-                }),
+                body: JSON.stringify({ tipo: oficio.id, html: oficio.html, filename: fileName }),
             });
-
-            if (!res.ok) {
-                const msg = await res.text();
-                console.error("Error generando PDF:", msg);
-                alert("Error al generar el PDF (ver consola)");
-                return;
-            }
-
             const blob = await res.blob();
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = fileName;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            URL.revokeObjectURL(url);
+            saveAs(blob, fileName);
         } catch (err) {
             console.error("❌ Error descargando PDF:", err);
-            alert("No se pudo descargar el PDF.");
         }
+    };
+
+    /* === Descargar todos (ZIP) === */
+    const downloadAllPdfs = async () => {
+        if (generatedOficios.length === 0) return;
+        const zip = new JSZip();
+
+        for (const oficio of generatedOficios) {
+            try {
+                const fileName = `${oficio.orgCode} - ${oficio.cliente}.pdf`;
+                const res = await fetch("/api/pdf", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ tipo: oficio.id, html: oficio.html, filename: fileName }),
+                });
+                const blob = await res.blob();
+                zip.file(fileName, blob);
+            } catch (e) {
+                console.error(`⚠️ Error con ${oficio.id}:`, e);
+            }
+        }
+
+        const zipBlob = await zip.generateAsync({ type: "blob" });
+        saveAs(zipBlob, "oficios_generados.zip");
     };
 
     /* === Render === */
@@ -260,7 +247,6 @@ export default function OficiosPage() {
             </header>
 
             <div className={styles.grid}>
-                {/* === Lista de oficios === */}
                 <section className={styles.leftCol}>
                     <h5 className={styles.sectionTitle}>Oficios disponibles</h5>
                     <button className={styles.btnSecondary} onClick={clearSelection}>
@@ -280,7 +266,6 @@ export default function OficiosPage() {
                     </div>
                 </section>
 
-                {/* === Cliente === */}
                 <aside className={styles.rightCol}>
                     <h5 className={styles.sectionTitle}>Datos del cliente</h5>
 
@@ -306,7 +291,7 @@ export default function OficiosPage() {
                         <>
                             <input
                                 className={`${styles.input} ${styles.searchInput}`}
-                                placeholder="Buscar por apellido, nombre, DNI o N° de expediente (ej: 025817)…"
+                                placeholder="Buscar cliente..."
                                 value={q}
                                 onChange={(e) => setQ(e.target.value)}
                             />
@@ -323,9 +308,7 @@ export default function OficiosPage() {
                                                     setQ("");
                                                 }}
                                             >
-                                                {(c.apellido || "")} {(c.nombre || "")}{" "}
-                                                {c.dni ? `· DNI ${c.dni}` : ""}{" "}
-                                                {c.expediente ? `· Exp. ${c.expediente}` : ""}
+                                                {(c.apellido || "")} {(c.nombre || "")}
                                             </button>
                                         ))
                                     ) : (
@@ -356,28 +339,33 @@ export default function OficiosPage() {
             {generatedOficios.length > 0 && (
                 <section className={styles.previewSection}>
                     <h4 className={styles.previewTitle}>Oficios generados</h4>
+
+                    {/* Botonera unificada */}
+                    <div className={styles.previewBtnsGroup}>
+                        <button
+                            className={styles.btnSuccess}
+                            onClick={downloadAllPdfs}
+                        >
+                            <FaDownload /> Descargar todos (ZIP)
+                        </button>
+                        {generatedOficios.map((oficio) => (
+                            <button
+                                key={oficio.id}
+                                className={styles.btnSuccessOutline}
+                                onClick={() => downloadPdf(oficio)}
+                            >
+                                <FaDownload /> {oficio.titulo}
+                            </button>
+                        ))}
+                    </div>
+
                     <div className={styles.previewGrid}>
                         {generatedOficios.map((oficio) => (
                             <div key={oficio.id} className={styles.cardPreview}>
-                                <div className={styles.cardPreviewBody}>
-                                    <h5 className={styles.cardPreviewTitle}>{oficio.titulo}</h5>
-                                    <p className={styles.cardPreviewText}>
-                                        Cliente: <strong>{oficio.cliente}</strong>
-                                    </p>
-                                    <div className={styles.previewBtns}>
-                                        <button
-                                            className={styles.btnSuccessOutline}
-                                            onClick={() => downloadPdf(oficio)}
-                                        >
-                                            Descargar PDF (A4)
-                                        </button>
-                                    </div>
-                                    <div
-                                        className={styles.oficioDoc}
-                                        ref={(el) => (htmlRefs.current[oficio.id] = el)}
-                                        dangerouslySetInnerHTML={{ __html: oficio.html }}
-                                    />
-                                </div>
+                                <div
+                                    className={styles.oficioDoc}
+                                    dangerouslySetInnerHTML={{ __html: oficio.html }}
+                                />
                             </div>
                         ))}
                     </div>

@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { adminRtdb } from "@/lib/firebaseClient";
 import { buildOficio } from "@/lib/oficios/templates";
 
 // -------------------- Helpers --------------------
@@ -72,7 +71,7 @@ function resolverJuzgado(cliente, juzgados = []) {
 		secretaria: sec
 			? `${sec.titulo || `Secretaría Nº ${secretariaNumero}`} ${
 					sec.titular ? `a cargo de ${sec.titular}` : ""
-			  }`
+			}`
 			: `Secretaría Nº ${secretariaNumero}`,
 		domicilio: jz.domicilio || "",
 		email: (sec?.emails && sec.emails[0]) || jz.email || "",
